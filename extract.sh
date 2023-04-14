@@ -9,14 +9,15 @@ if [ ! -f $last_id_ref ]; then
 else
 	id=$(($(cat $last_id_ref) + 1))
 fi
+#id=8
 while [ true ]
 do
 	title=$(curl -s  https://crazyshit.com/memes/tag/${id}-cringe/ | grep "<title>" | sed -e 's/<[^>]*>//g')
 	separator=$(echo $title | awk '{print $2}')
 	if [ $separator == "|" ]; then
-		tag=$(echo $title | awk '{print $2}' FS='[-|]' | awk '{$(NF--)=""; print $0}' | sed 's/ *$//g' |  tr " " "-")
+		tag=$(echo $title | sed 's/ - Crazy Shit//g' | awk '{print $2}' FS='[|]' | awk '{$(NF--)=""; print $0}' | sed 's/ *$//g' |  tr " " "-")
 		echo "${id}-${tag} : https://crazyshit.com/memes/tag/${id}-${tag}/"
-		echo "[${tag}](https://crazyshit.com/memes/tag/${id}-${tag}/)" >> $output_list
+		echo "[${tag}](https://crazyshit.com/memes/tag/${id}-${tag}/)  " >> $output_list
 		without_tag=0
 		echo $id > $last_id_ref
 	else
@@ -27,5 +28,6 @@ do
 		break
 	fi
 	id=$((id + 1))
+#	exit
 done
 echo "End of process"
